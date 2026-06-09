@@ -11,6 +11,7 @@
     "dev:backend": "yarn workspace backend dev",
     "build:frontend": "yarn workspace frontend build",
     "build:backend": "yarn workspace backend build",
+    "preview": "yarn workspace frontend preview",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:migrate": "yarn workspace backend prisma migrate dev",
