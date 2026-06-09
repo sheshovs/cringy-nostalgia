@@ -1,0 +1,24 @@
+{
+  "name": "cringy-nostalgia",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "docker compose up -d && concurrently --names \"backend,frontend\" --prefix-colors \"blue,green\" \"yarn dev:backend\" \"yarn dev:frontend\"",
+    "dev:frontend": "yarn workspace frontend dev",
+    "dev:backend": "yarn workspace backend dev",
+    "build:frontend": "yarn workspace frontend build",
+    "build:backend": "yarn workspace backend build",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "yarn workspace backend prisma migrate dev",
+    "db:generate": "yarn workspace backend prisma generate",
+    "db:studio": "yarn workspace backend prisma studio"
+  },
+  "packageManager": "yarn@4.9.1",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

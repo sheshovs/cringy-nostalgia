@@ -1,0 +1,88 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  bio          String?
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  books        Book[]
+  followers    Follow[] @relation("Following")
+  following    Follow[] @relation("Follower")
+
+  @@map("users")
+}
+
+model Book {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  coverColor   String?
+  coverPattern String?
+  isPublic     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readings Reading[]
+
+  @@map("books")
+}
+
+model Reading {
+  id            String    @id @default(cuid())
+  title         String
+  author        String?
+  openLibraryId String?
+  coverUrl      String?
+  status        ReadingStatus @default(WANT_TO_READ)
+  rating        Int?      // 1-5 estrellas
+  cringeLevel   Int?      // 1-5 nivel de cringe 😣
+  cringeReason  String?   // ¿por qué te dio cringe?
+  redFlags      String?   // ¿qué red flags encontraste? 🚩
+  reflection    String?   // reflexión que te generó
+  recommendedTo String?   // ¿a quién se lo recomendarías?
+  notes         String?
+  startDate     DateTime?
+  finishDate    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@map("readings")
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@map("follows")
+}
+
+enum ReadingStatus {
+  WANT_TO_READ
+  READING
+  FINISHED
+  DROPPED
+}
